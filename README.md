@@ -1,5 +1,5 @@
 # AceBlog
-AceBlog 项目使用 ASP.NET CORE 开发(src)，安装.NET CORE2.1环境即可打开运行。
+AceBlog 项目使用 ASP.NET CORE 开发，安装.NET CORE2.1环境即可打开运行。
 
 数据库使用 SQLite，启动运行前请在配置文件中（src/AceBlog.Web/configs/appsettings.json）配置好 SQLite 的db文件（db文件位于src/AceBlog.Web/aceblog.db），连接字符串建议使用绝对路径。将AceBlog.Web设置为启动项即可启动。
 
