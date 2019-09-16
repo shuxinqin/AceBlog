@@ -1,0 +1,53 @@
+﻿@{
+    ViewBag.Title = "管理中心";
+    UserSession user = this.Context.GetCurrentUser();
+}
+@Html.Partial("List_js")
+
+@section Nav{
+    @this.Html.Partial("../Shared/UserNav", "UserBlogs")
+}
+@section ScriptAndStyle{
+    <script type="text/javascript" src="/Content/knockout/knockout-3.4.2.js"></script>
+    <script type="text/javascript" src="/Content/knockout/knockout.mapping-latest.js"></script>
+    <script type="text/javascript" src="/Content/js/kohelper.js"></script>
+
+    <link href="/Content/layer/layer.css" rel="stylesheet" />
+    <script type="text/javascript" src="/Content/layer/layer.js"></script>
+
+    <script type="text/javascript" src="/Content/My97DatePicker/WdatePicker.js"></script>
+
+    <script type="text/javascript" src="/Content/js/ace.js"></script>
+}
+
+<div style="max-width:1000px;">
+    <div>
+        <table class="table table-hover" data-bind="with:dataTable">
+            <thead>
+                <tr>
+                    <th>标题</th>
+                    <th>创建时间</th>
+                    <th>发布状态</th>
+                    <th>阅读数</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody data-bind="foreach:models">
+                <tr data-bind="click:$parent.rowClick">
+                    <td>
+                        <a href="#" target="_blank" data-bind="text:Title,attr:{href:('/' + AuthorId() + '/Blog/' + Id())}"></a>
+                    </td>
+                    <td data-bind="dateString:CreateTime,datePattern:'yyyy-MM-dd HH:mm'"></td>
+                    <td data-bind="text:$root.getStatusName(Status())"></td>
+                    <td data-bind="text:ReadCount"></td>
+                    <td>
+                        <button class="a-btn-link" data-bind="text:Status()==0?'发布':'下线', click:$parent.publish"></button>
+                        &nbsp;<button class="a-btn-link" data-bind="text:'编辑', click:$parent.edit"></button>
+                        &nbsp;<button class="a-btn-link" data-bind="text:'删除', click:$parent.del"></button>
+                    </td>
+                </tr>
+            </tbody>
+            <pagefoot></pagefoot>
+        </table>
+    </div>
+</div>

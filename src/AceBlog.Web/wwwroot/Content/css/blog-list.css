@@ -1,0 +1,54 @@
+﻿.blog-list {
+    list-style: none;
+    width: 100%;
+    padding: 0;
+}
+
+    .blog-list li {
+        width: 100%;
+        padding: 16px 24px 5px 24px;
+        border-bottom: 1px rgba(0,0,0,.05) solid;
+    }
+
+        .blog-list li:hover {
+            background-color: #fafafa;
+        }
+
+    .blog-list a {
+        color: black;
+    }
+
+        .blog-list a:hover {
+            text-decoration: none;
+        }
+
+.blog-title {
+    font-size: 16px;
+}
+
+    .blog-title a:hover {
+        color: #ca0c16;
+    }
+
+.author {
+    font-size: 13px;
+    min-height: 25px;
+}
+
+    .author a:hover {
+        color: #157dcf;
+    }
+
+    .author img {
+        border-radius: 50%;
+    }
+
+.summary {
+    margin-bottom: 4px;
+    color: #8a8a8a;
+    font-size: 14px;
+    line-height: 24px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}

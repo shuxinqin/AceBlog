@@ -1,0 +1,100 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+
+    <title>@ViewBag.Title</title>
+    <link href="/Content/bootstrap/bootstrap.min.css" rel="stylesheet" />
+    <link href="/Content/font-awesome/font-awesome.min.css" rel="stylesheet" />
+    <link href="/Content/css/layout-page.css" rel="stylesheet" />
+    <link href="/Content/css/style.css" rel="stylesheet" />
+    <script type="text/javascript" src="/Content/jquery/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="/Content/bootstrap/bootstrap.min.js"></script>
+
+    <script type="text/javascript" src="/Content/js/back-top.js"></script>
+
+    <style>
+        .a-nav {
+            list-style: none;
+            line-height: 30px;
+            font-size: 14px;
+        }
+
+            .a-nav li {
+                float: left;
+                margin-left: 10px;
+                margin-right: 10px;
+            }
+
+            .a-nav a {
+                color: #ffffff;
+            }
+    </style>
+
+</head>
+<body style="background-color:#F5F6F7;">
+    <div class="cn-toolbar">
+
+        @{
+            UserSession user = this.Context.GetCurrentUser();
+        }
+
+        <div>
+
+            <ul>
+                <li style="padding-right:40px;">
+                    <a href="/" class=""><img style="width:38px;height:38px;" src="@this.Href("~/Content/images/logo.png")"> <span style="font-size:13px;">博客园</span></a>
+                </li>
+
+                @RenderSection("Nav", required: false)
+            </ul>
+
+            <div style="float:right;font-size:13px;">
+                <ul>
+                    <li>
+                        <a href="/Blog/Edit">写博客</a>
+                    </li>
+
+                    @if (user != null)
+                    {
+                        <li style="margin-right: 0px;font-size:12px;">
+                            <a style="color:#369;" href="/@user.UserId">@user.Name</a>
+                        </li>
+                        <li style="margin-left: 5px; font-size:12px;">
+                            <a style="color:#369;" href="/Account/Logout">退出</a>
+                        </li>
+                    }
+                    else
+                    {
+                        <li>
+                            <a href="/Account/Login">登录</a>
+                        </li>
+                        <li>
+                            <a href="/Account/Register">注册</a>
+                        </li>
+                    }
+                </ul>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="body" style="margin-top:50px;">
+        @RenderBody()
+    </div>
+
+    <footer>
+        <div style="text-align:center;">
+            <p class="copyright-text">
+                Copyright &copy; 2018-@DateTime.Now.Year 我的博客&nbsp;&nbsp;&nbsp;<span style="font-size:12px;">Powered by ASP.NET Core on Linux</span>
+            </p>
+        </div>
+    </footer>
+    @RenderSection("ScriptAndStyle", required: false)
+</body>
+</html>

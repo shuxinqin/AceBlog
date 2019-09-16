@@ -1,0 +1,222 @@
+﻿<script>
+    var _uploadURL = "/File/Upload";
+    var _docEditor;
+    var _vm;
+    var _editBlogId = @(this.ViewBag.EditBlogId== null ? "null" : this.ViewBag.EditBlogId.ToString());
+
+    var _editorConfig = {
+        placeholder: "......",
+        width: "99%",
+        height: 800,
+        syncScrolling: "single",
+        taskList: true,
+        tocm: false,
+        tocContainer: "#catalogSide",
+        path: "/Content/editormd/lib/",
+        toolbarIcons: function () {
+            // Or return editormd.toolbarModes[name]; // full, simple, mini
+            // Using "||" set icons align right.
+            return ["undo", "redo", "save", "|", "bold", "del", "italic", "quote", "ucwords", "uppercase", "lowercase", "|", "h1", "h2", "h3", "h4", "h5", "h6", "|", "list-ul", "list-ol", "hr", "|", "link", "image", "code-block", "table", "html-entities", "pagebreak", "|", "watch", "preview", "clear", "|", "help"];
+        },
+        toolbarIconsClass: { save: "fa-save" },
+        lang: { toolbar: { save: "保存" } },
+        toolbarHandlers: {
+            save: (cm, icon, cursor, selection) => {
+                _vm.saveDoc();
+            }
+        },
+        imageUpload: true,
+        imageUploadURL: _uploadURL,
+        token: "",
+        saveHTMLToTextarea: true,
+        markdown: "",
+        onchange: function () {
+
+        },
+        onload: function () {
+            onMdEditorLoad();
+        }
+    };
+
+    $(function () {
+        var vm = new PageViewModel();
+        _vm = vm;
+        ko.applyBindings(vm);
+        vm.init();
+
+        window.onbeforeunload = function () {
+            var blogBak = _vm.blogBak;
+            var blog = _vm.getFormData();
+            var hasChange = !isEqual(blogBak.Title, blog.Title) || !isEqual(blogBak.Tag, blog.Tag) || !isEqual(blogBak.Summary, blog.Summary) || !isEqual(blogBak.MarkdownCode, blog.MarkdownCode);
+            if (hasChange) {
+                return ('当前数据未保存，确认离开当前页面吗？');
+            }
+
+            function isEqual(obj1, obj2) {
+                obj1 = obj1 || "";
+                obj2 = obj2 || "";
+                return obj1 == obj2;
+            }
+        }
+    });
+
+    function PageViewModel() {
+        var me = this;
+        ViewModel.call(me);
+        vmExtend.call(me);
+
+        me.blog = _ob({});
+        me.blogBak = {};
+
+        me.publish = function () {
+            var blog = me.getFormData();
+            me.checkBlog(blog);
+
+            var param = {};
+            param.Title = blog.Title;
+            param.Tag = blog.Tag;
+            param.Summary = blog.Summary;
+
+            param.MarkdownCode = blog.MarkdownCode;
+            param.Html = blog.Html;
+
+            if (blog.Id) {
+                //更新或发布未发布的博客
+                param.Id = blog.Id;
+                $ace.post("/Blog/Publish", param, function (result) {
+                    me.blogBak = blog;
+                    $ace.msg("发布成功", function () {
+                        var blog = result.Data;
+                        var redirect = "/" + blog.AuthorId + "/Blog/" + blog.Id;
+                        window.location.href = redirect;
+                    });
+                }
+                );
+            }
+            else {
+                //新增并发布博客
+                $ace.post("/Blog/AddAndPublish", param, function (result) {
+                    me.blogBak = blog;
+                    $ace.msg("发布成功", function () {
+                        var blog = result.Data;
+                        var redirect = "/" + blog.AuthorId + "/Blog/" + blog.Id;
+                        window.location.href = redirect;
+                     });
+                }
+                );
+            }
+        }
+
+        me.saveDraft = function () {
+            var blog = me.getFormData();
+            me.checkBlog(blog);
+
+            var param = {};
+            param.Title = blog.Title;
+            param.Tag = blog.Tag;
+            param.Summary = blog.Summary;
+
+            param.MarkdownCode = blog.MarkdownCode;
+            param.Html = blog.Html;
+
+            param.Id = blog.Id || null;
+
+            $ace.post("/Blog/SaveDraft", param, function (result) {
+                $ace.msg("已保存", function () {
+                    me.blog().Id = result.Data.Id;
+                    me.blogBak = JSON.parse(JSON.stringify(blog));
+                });
+            });
+        }
+
+        me.getFormData = function () {
+            var blog = me.blog();
+
+            blog.MarkdownCode = _docEditor.getMarkdown()||"";
+            blog.Html = _docEditor.getHTML();
+
+            return blog;
+        }
+        me.checkBlog = function (blog) {
+            if (!blog.Title || !blog.Html) {
+                $ace.alert("标题或内容不能为空");
+                throw new Error();
+                return;
+            }
+        }
+    }
+    function vmExtend() {
+        var me = this;
+
+        me.init = function () {
+            if (!_editBlogId) {//新增
+                _docEditor = editormd("mdEditor", _editorConfig);
+                return;
+            }
+
+            $ace.get("/Blog/Mine/" + _editBlogId, function (result) {
+                var blog = result.Data;
+                if (blog != null) {
+                    me.blog(blog);
+                    _editorConfig.markdown = blog.MarkdownCode;
+                }
+
+                _docEditor = editormd("mdEditor", _editorConfig);
+            });
+        }
+    }
+
+    function onMdEditorLoad() {
+         _vm.blogBak = JSON.parse(JSON.stringify(_vm.getFormData()));
+         $("#mdEditor .CodeMirror")
+            .find("textarea")
+            .on("paste", function (event) {
+                // https://www.jb51.net/article/80657.htm
+
+                if (event.clipboardData || event.originalEvent) {
+                    var clipboardData =
+                        event.clipboardData || event.originalEvent.clipboardData;
+                    var fileIndex = clipboardData.types.indexOf("Files");
+                    if (
+                        fileIndex >= 0 &&
+                        clipboardData.items[fileIndex].type.indexOf("image") !== -1
+                    ) {
+                        var file = clipboardData.items[fileIndex];
+
+                        var blob = file.getAsFile();
+                        var img = blob;
+
+                        var uploderURL = _uploadURL;
+
+                        var loading = null;
+                        var formData = new FormData();
+                        formData.append("file", img);
+                        // ajax上传
+                        var xhr = new XMLHttpRequest();
+                        // 上传结束
+                        xhr.onload = function () {
+                            loading.close();
+
+                            var result = JSON.parse(xhr.responseText);
+                            if (!result.Success) {
+                                $ace.alert("上传失败：" + result.Msg);
+                                return;
+                            }
+
+                            var imgUrl = result.Data;
+                            var mdLink = "![](" + imgUrl + ")";
+                            _docEditor.insertValue(mdLink);
+                        };
+                        xhr.open("POST", uploderURL, true);
+
+                        loading = $ace.loading("上传中...");
+
+                        xhr.send(formData);
+
+                        event.stopPropagation();
+                        event.preventDefault();
+                    }
+                }
+            });
+    }
+</script>

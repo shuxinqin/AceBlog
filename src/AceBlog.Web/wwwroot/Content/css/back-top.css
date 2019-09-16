@@ -1,0 +1,20 @@
+﻿.go-top {
+    background-color: #eee;
+    bottom: 2em;
+    right: 2em;
+    color: #111112;
+    font-size: 22px;
+    display: none;
+    position: fixed;
+    text-decoration: none;
+    width: 50px;
+    height: 50px;
+    line-height: 50px;
+    text-align: center;
+    transition: all 0.4s ease-in-out;
+}
+
+    .go-top:hover {
+        background: #f1c11a;
+        color: #ffffff;
+    }

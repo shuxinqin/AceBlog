@@ -1,0 +1,183 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>注册</title>
+    <link href="~/Content/font-awesome/font-awesome.min.css" rel="stylesheet" />
+    <link href="~/Content/css/background.css" rel="stylesheet" />
+    <link href="~/Content/css/register.css" rel="stylesheet" />
+
+
+    <script type="text/javascript" src="~/Content/jquery/jquery-1.11.1.min.js"></script>
+
+    <script type="text/javascript" src="~/Content/jquery/jquery.cookie.js"></script>
+    <script type="text/javascript" src="~/Content/jquery/jquery.md5.js"></script>
+    <script type="text/javascript" src="~/Content/js/ace.js"></script>
+
+    <style>
+    </style>
+
+</head>
+<body>
+    <div class="background" style="">
+        <ul class="bg-bubbles">
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+        </ul>
+    </div>
+
+    <div class="container" style="">
+        <div class="logo" style="text-align:center;">
+            <h1><span>注册</span></h1>
+        </div>
+        <form class="form">
+
+            <div class="row">
+                <strong>用户名</strong>
+                <input id="txt_account" type="text" placeholder="登录名，至少5位个字符">
+                <i class="fa fa-user"></i>
+            </div>
+            <div class="row">
+                <strong>昵称</strong>
+                <input id="txt_nickname" type="text" placeholder="显示昵称，至少2个字符">
+                <i class="fa fa-user"></i>
+            </div>
+            <div class="row">
+                <strong>密码</strong>
+                <input id="txt_password" type="password" placeholder="登录密码">
+                <i class="fa fa-key"></i>
+            </div>
+            <div class="row">
+                <strong>确认密码</strong>
+                <input id="txt_comfirmpassword" type="password" placeholder="确认密码">
+                <i class="fa fa-key"></i>
+            </div>
+            <div class="row">
+                <input id="txt_code" maxlength="4" type="text" placeholder="验证码" style="width: 190px; float: left;">
+                <div style="width: 110px; float: right; padding-top: 14px; padding-left: 14px;">
+                    看不清？<a id="switchCode" href="javascript:void();" style="text-decoration: none;">换一张</a>
+                    <img id="imgcode" class="authcode" src="@this.Href("~/Account/VerifyCode")" width=" 80" height="25" />
+                </div>
+            </div>
+            <div class="row">
+                <button id="btn_submit" type="button"><span>注册</span></button>
+            </div>
+
+            <div class="row" style="text-align:center;margin-top:10px;">
+                已有帐号？<a href="/Account/Login">去登录</a>
+            </div>
+            <div class="tips row">
+                @*<div class="tips_msg"><i class="fa fa-question-circle"></i> 请输入用户名</div>*@
+            </div>
+        </form>
+
+    </div>
+
+    <div class="copyright">
+
+    </div>
+    <script type="text/javascript">
+        (function ($) {
+            $.form = {
+                formMessage: function (msg) {
+                    $('.tips').find('.tips_msg').remove();
+                    $('.tips').append('<div class="tips_msg"><i class="fa fa-question-circle"></i>' + msg + '</div>');
+                },
+                submit: function () {
+
+                    var formData = {};
+                    formData.AccountName = $("#txt_account").val();
+                    formData.NickName = $("#txt_nickname").val();
+                    formData.Password = $("#txt_password").val();
+
+                    var comfirmpassword = $("#txt_comfirmpassword").val();
+
+
+                    if (!formData.AccountName) {
+                        $("#txt_account").focus();
+                        $.form.formMessage('请输入用户名');
+                        return false;
+                    }
+                    if (!formData.NickName) {
+                        $("#txt_nickname").focus();
+                        $.form.formMessage('请输入昵称');
+                        return false;
+                    }
+                    if (!formData.Password) {
+                        $("#txt_password").focus();
+                        $.form.formMessage('请输入登录密码');
+                        return false;
+                    }
+                    if (formData.Password != comfirmpassword) {
+                        $("#txt_comfirmpassword").focus();
+                        $.form.formMessage('确认密码与登录密码不一致');
+                        return false;
+                    }
+
+                    var $code = $("#txt_code");
+                    if ($code.val() == "") {
+                        $code.focus();
+                        $.form.formMessage('请输入验证码。');
+                        return false;
+                    }
+
+                    $("#btn_submit").attr('disabled', 'disabled').find('span').html("正在注册...");
+                    var params = { AccountName: formData.AccountName, Password: formData.Password, NickName: formData.NickName, VerifyCode: $.trim($code.val()) };
+                    $.ajax({
+                        url: "/Account/Register",
+                        data: params,
+                        type: "post",
+                        dataType: "json",
+                        success: function (data) {
+                            if (data.Success == true) {
+                                $("#btn_submit").find('span').html("注册成功，正在跳转...");
+                                window.location.href = "/";
+                            } else {
+                                $("#btn_submit").removeAttr('disabled').find('span').html("注册");
+                                $("#switchCode").trigger("click");
+                                $code.val('');
+                                $.form.formMessage(data.Msg);
+                            }
+                        }
+                    });
+                },
+                init: function () {
+                    $("#switchCode").click(function () {
+                        $("#imgcode").attr("src", "/Account/VerifyCode?t=" + Math.random());
+                    });
+
+                    $("#txt_account").focus();
+
+                    $("#btn_submit").click(function () {
+                        $.form.submit();
+                    });
+                    document.onkeydown = function (e) {
+                        if (!e) e = window.event;
+                        if ((e.keyCode || e.which) == 13) {
+                            document.getElementById("btn_submit").focus();
+                            document.getElementById("btn_submit").click();
+                        }
+                    }
+                }
+            };
+            $(function () {
+                $.form.init();
+            });
+        })(jQuery);
+    </script>
+</body>
+</html>

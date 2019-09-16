@@ -1,0 +1,16 @@
+﻿@{
+    UserSession owner = this.Context.GetCurrentUser();
+    string tag = this.Model;
+    string activeClassName = "active";
+}
+
+<li class="@(tag=="UserHome"?activeClassName:"")">
+    <a href="@this.Href($"/{owner.UserId}")">我的主页</a>
+</li>
+
+<li class="@(tag=="UserCenter"?activeClassName:"")">
+    <a href="/Account/Index">个人中心</a>
+</li>
+<li class="@(tag=="UserBlogs"?activeClassName:"")">
+    <a href="/Blog/List">管理</a>
+</li>

@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Chloe.Extension" Version="3.8.0" />
+    <PackageReference Include="Chloe.SQLite" Version="3.9.0" />
+    <PackageReference Include="Chloe.SqlServer" Version="3.9.0" />
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="2.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Ace\Ace.csproj" />
+  </ItemGroup>
+
+</Project>

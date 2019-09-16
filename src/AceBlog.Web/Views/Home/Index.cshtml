@@ -1,0 +1,37 @@
+﻿@{
+    ViewBag.Title = "Ace博客 - 首页";
+}
+
+@section ScriptAndStyle{
+    <link rel="stylesheet" href="/Content/css/blog-list.css" />
+}
+
+<div style="width:800px;min-height:750px; margin-left: auto;margin-right: auto;box-shadow: 0 2px 2px 0 rgba(0,0,0,.05);background-color:white;">
+    <div>
+        <ul class="blog-list">
+
+            @{
+                PagedData<BlogModel> data = this.ViewBag.Blogs;
+
+            }
+
+            @foreach (BlogModel blog in data.Models)
+            {
+                <li>
+                    <div style="" class="blog-title"><strong><a target="_blank" href="@this.Href(blog.GetBlogUrl())">@Html.Raw(blog.Title)</a></strong></div>
+                    <div class="summary">@Html.Raw(blog.Summary)</div>
+                    <div class="author">
+                        <a href="@blog.Author.GetHomeUrl()"><img style="width:25px;height:25px;" src="@this.Href(blog.Author.HeadPhoto)"> <span style="">@this.Html.Raw(blog.Author.NickName)</span></a>
+                        <span style="float:right;color: #8a8a8a;">发布于 <span>@blog.CreateTime.ToString("yyyy-MM-dd HH:mm")</span>&nbsp;&nbsp;&nbsp; 阅读数 <span style="color:#157dcf;">@blog.ReadCount</span></span>
+                    </div>
+                </li>
+            }
+        </ul>
+    </div>
+</div>
+
+<div style="text-align:center;">
+    @this.Html.Raw(PagingHelper.Paging(data.TotalCount, data.PageSize, data.CurrentPage, "/?page={0}"))
+</div>
+
+

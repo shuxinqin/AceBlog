@@ -1,0 +1,92 @@
+﻿@{
+    BlogModel blog = this.ViewBag.Blog;
+    BlogNeighbour blogNeighbour = this.ViewBag.BlogNeighbour;
+
+    ViewBag.Title = blog.Title;
+}
+
+@section ScriptAndStyle{
+    <link href="/Content/editormd/css/editormd.min.css" rel="stylesheet" />
+    <script type="text/javascript" src="/Content/editormd/lib/prettify.min.js"></script>
+}
+
+@{
+    UserSession user = this.Context.GetCurrentUser();
+}
+
+@section Nav{
+
+    @{
+        bool isMyHome = user != null && blog.AuthorId == user.UserId;
+    }
+
+    @if (isMyHome)
+    {
+        @this.Html.Partial("../Shared/UserNav", "")
+    }
+    else
+    {
+        <li class="active">
+            <a href="@this.Href($"/{blog.AuthorId}")">Ta的主页</a>
+        </li>
+    }
+}
+
+<style>
+    .ownerinfo {
+        position: absolute;
+        top: 0;
+        left: 1px;
+        float: left;
+        width: 250px;
+        height: 100%;
+        vertical-align: top;
+        box-shadow: 0 2px 2px 0 rgba(0,0,0,.05);
+        background-color: white;
+        padding: 10px;
+        font-size: 13px;
+    }
+
+    .info-item {
+        padding-top: 5px;
+    }
+</style>
+
+<script>
+    $(function () {
+        $(".bodyContent pre").addClass("prettyprint");/* linenums */
+        PR.prettyPrint();
+        if ($(".blog-content").height() < (document.body.clientHeight - 110)) {
+            $(".blog-content").height(document.body.clientHeight - 110);
+        }
+        console.log(document.body.clientHeight);
+    });
+</script>
+<div style="margin:auto; width:1100px;height:100%; ">
+    <div style="position:relative;height:100%; ">
+        <div class="ownerinfo" style="">
+            <div><img style="width:50px;height:50px;border-radius:5px;" src="@this.Href(blog.Author.HeadPhoto)" /></div>
+            <div class="info-item" style="margin-top:5px;">昵称：<a href="@blog.Author.GetHomeUrl()">@blog.Author.NickName</a></div>
+            <div class="info-item">简介：@this.Html.Raw(blog.Author.Description ?? "无")</div>
+        </div>
+        <div class="blog-content" style="width:838px;  margin-left: 260px;box-shadow: 0 2px 2px 0 rgba(0,0,0,.05);background-color:white;">
+            <div style="font-size:22px;padding:15px 20px;"><strong>@Html.Raw(blog.Title)</strong></div>
+            <div id="content">
+                <div id="bodyContent" class="bodyContent markdown-body editormd-preview-container">
+                    @Html.Raw(blog.Html)
+                </div>
+            </div>
+            <div style="padding:15px 20px 0px 20px;font-size:13px;">
+                @if (blogNeighbour.Prev != null)
+                {
+                    <div><span>上一篇：</span><a href="@blogNeighbour.Prev.GetBlogUrl()">@blogNeighbour.Prev.Title</a></div>
+                }
+                @if (blogNeighbour.Next != null)
+                {
+                    <div><span>下一篇：</span><a href="@blogNeighbour.Next.GetBlogUrl()">@blogNeighbour.Next.Title</a></div>
+                }
+            </div>
+            <div style="font-size:14px;padding:15px 20px;color:#777;text-align:right;"><a href="@blog.Author.GetHomeUrl()" style="color:#777"><img style="width:30px;height:30px;vertical-align:bottom;margin-right:5px;border-radius:3px;" src="@this.Href(blog.Author.HeadPhoto)" />@blog.Author.NickName</a> 发布于 @((blog.PublishTime ?? blog.CreateTime).ToString("yyyy-MM-dd HH:mm")) 阅读(@blog.ReadCount)</div>
+        </div>
+    </div>
+</div>

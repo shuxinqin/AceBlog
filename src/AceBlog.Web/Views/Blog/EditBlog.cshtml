@@ -1,0 +1,59 @@
+﻿@{
+    ViewBag.Title = "EditBlog";
+
+    UserSession user = this.Context.GetCurrentUser();
+}
+@this.Partial("EditBlog_js")
+
+@section Nav{
+    @this.Html.Partial("../Shared/UserNav", "")
+}
+
+<link href="/Content/css/style.css" rel="stylesheet" />
+
+<script type="text/javascript" src="/Content/knockout/knockout-3.4.2.js"></script>
+<script type="text/javascript" src="/Content/knockout/knockout.mapping-latest.js"></script>
+<script type="text/javascript" src="/Content/js/kohelper.js"></script>
+
+<link href="/Content/layer/layer.css" rel="stylesheet" />
+<script type="text/javascript" src="/Content/layer/layer.js"></script>
+
+<script type="text/javascript" src="/Content/js/ace.js"></script>
+
+<link href="/Content/editormd/css/editormd.min.css" rel="stylesheet" />
+<script type="text/javascript" src="/Content/editormd/editormd.js"></script>
+
+<style>
+    .blog-info-table td {
+        padding: 10px 5px;
+    }
+</style>
+<script type="text/javascript">
+    window.onbeforeunload = function () { if (true) return ('确认离开当前页面吗？未保存的数据将会丢失！'); }
+</script>
+<div style="padding:0 10px;">
+    <table class="blog-info-table">
+        <tbody>
+            <tr>
+                <td>标题：</td>
+                <td><input class="a-control" type="text" style="width:500px;" data-bind="value:blog().Title" /></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>标签：</td>
+                <td><input class="a-control" type="text" style="width:500px;" data-bind="value:blog().Tag" /></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>摘要：</td>
+                <td><textarea class="a-control" style="width:500px;height:110px;display: inline-block;box-sizing: border-box" data-bind="value:blog().Summary"></textarea></td>
+                <td style="vertical-align:bottom;padding-bottom:15.5px;"><input class="a-btn" style="" type="button" value="发布" data-bind="click:publish" />&nbsp;&nbsp;<input class="a-btn" type="button" value="存为草稿" data-bind="click:saveDraft,visible:(!blog().Id || blog().Status==0)" /></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <br />
+    <div id="mdEditor">
+        <textarea style="display:none;"></textarea>
+    </div>
+</div>
