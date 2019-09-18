@@ -18,7 +18,7 @@ namespace AceBlog.Service
     {
         public static IServiceCollection AddServices(this IServiceCollection services, IConfiguration config)
         {
-            services.RegisterBizServices(Assembly.GetExecutingAssembly());
+            services.RegisterAppServices(Assembly.GetExecutingAssembly());
             services.AddMediatR(Assembly.GetExecutingAssembly());
 
             return services;

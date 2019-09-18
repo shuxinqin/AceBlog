@@ -40,7 +40,7 @@ namespace Ace
         /// <param name="services"></param>
         /// <param name="assembly"></param>
         /// <returns></returns>
-        public static IServiceCollection RegisterBizServices(this IServiceCollection services, Assembly assembly)
+        public static IServiceCollection RegisterAppServices(this IServiceCollection services, Assembly assembly)
         {
             Type typeOf_IService = typeof(IService);
             var serviceTypes = assembly.GetTypes().Where(a => a.IsClass && !a.IsAbstract && typeOf_IService.IsAssignableFrom(a));
