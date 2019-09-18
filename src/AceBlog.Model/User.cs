@@ -49,11 +49,11 @@ namespace AceBlog.Entity
         public DateTime RegisterTime { get; set; }
 
         /// <summary>
-        /// 添加新博客，但未发布
+        /// 创建新博客，但未发布
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        public Blog AddBlog(BlogInputBase input)
+        public Blog CreateBlog(BlogInputBase input)
         {
             input.Validate();
 

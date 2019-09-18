@@ -42,7 +42,7 @@ namespace AceBlog.Service
         {
             User user = this._userRepository.Get(input.AuthorId);
 
-            Blog blog = user.AddBlog(input);
+            Blog blog = user.CreateBlog(input);
             user.PublishBlog(blog);
 
             this.AddBlog(blog);
@@ -89,7 +89,7 @@ namespace AceBlog.Service
             if (input.Id == null)
             {
                 User user = this._userRepository.Get(input.AuthorId);
-                blog = user.AddBlog(input);
+                blog = user.CreateBlog(input);
                 this.AddBlog(blog);
             }
             else
