@@ -17,7 +17,7 @@ namespace AceBlog.Web.Common
         public List<Claim> ToClaims()
         {
             List<Claim> claims = new List<Claim>();
-
+            
             claims.Add(new Claim("UserId", this.UserId == null ? "" : this.UserId.ToString()));
             claims.Add(new Claim("AccountName", this.AccountName ?? ""));
             claims.Add(new Claim("Name", this.Name ?? ""));
