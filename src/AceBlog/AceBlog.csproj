@@ -5,8 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Chloe.Extension" Version="3.8.0" />
-    <PackageReference Include="Chloe" Version="3.9.0" />
+
   </ItemGroup>
 
   <ItemGroup>
