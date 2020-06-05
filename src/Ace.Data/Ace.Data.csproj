@@ -6,8 +6,8 @@
 
   <ItemGroup>
     <PackageReference Include="Chloe.Extension" Version="4.6.0" />
-    <PackageReference Include="Chloe.SQLite" Version="4.6.0" />
-    <PackageReference Include="Chloe.SqlServer" Version="4.6.0" />
+    <PackageReference Include="Chloe.SQLite" Version="4.6.2" />
+    <PackageReference Include="Chloe.SqlServer" Version="4.6.2" />
     <PackageReference Include="Microsoft.Data.Sqlite" Version="2.1.0" />
   </ItemGroup>
 
