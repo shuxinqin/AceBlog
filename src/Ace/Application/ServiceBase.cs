@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Ace.Application
 {
@@ -43,6 +44,21 @@ namespace Ace.Application
             try
             {
                 action();
+                this.Uow.CommitTransaction();
+            }
+            catch
+            {
+                this.Uow.RollbackTransaction();
+                throw;
+            }
+        }
+
+        public virtual async Task UseTransaction(Func<Task> action)
+        {
+            this.Uow.BeginTransaction();
+            try
+            {
+                await action();
                 this.Uow.CommitTransaction();
             }
             catch
