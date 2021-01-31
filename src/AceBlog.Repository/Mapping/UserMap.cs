@@ -12,6 +12,8 @@ namespace AceBlog.Repository.Mapping
         public UserMap()
         {
             this.MapTo("Users");
+
+            this.Property(a => a.RegisterTime).UpdateIgnore();
         }
     }
     class UserDetailMap : EntityTypeBuilder<UserDetail>

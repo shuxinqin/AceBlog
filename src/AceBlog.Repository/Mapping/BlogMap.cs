@@ -9,6 +9,9 @@ namespace AceBlog.Repository.Mapping
 {
     class BlogMap : EntityTypeBuilder<Blog>
     {
-
+        public BlogMap()
+        {
+            this.Property(a => a.CreateTime).UpdateIgnore();
+        }
     }
 }
